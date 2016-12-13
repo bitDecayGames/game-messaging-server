@@ -1,0 +1,8 @@
+GET     /                                           controllers.GameController.index
+GET     /register                                   controllers.GameController.registerNewGame
+GET     /game/:id                                   controllers.GameController.getGame(id)
+GET     /game/:id/messages/time/:time               controllers.GameController.getNewMessagesByTime(id, time)
+GET     /game/:id/messages/index/:index             controllers.GameController.getNewMessagesByIndex(id, index)
+POST    /game/:id/message                           controllers.GameController.appendMessage(id)
+
+GET     /*file                                      controllers.Assets.versioned(path="/public", file: Asset)
