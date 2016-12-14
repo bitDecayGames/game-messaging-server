@@ -43,7 +43,7 @@ class GameController @Inject() extends Controller {
   def getNewMessagesByTime(id:String, timeStr:String) = Action { implicit request =>
     val time = timeStr.toLong
     ActiveGames.getGame(id) match {
-      case Some(game) => Ok(Json.arr(game.getNewMessagesByTime(time).map(_.info)))
+      case Some(game) => Ok(Json.toJson(game.getNewMessagesByTime(time).map(_.info)))
       case _ => NotFound(s"Could not find a game with the id: $id")
     }
   }
@@ -51,7 +51,7 @@ class GameController @Inject() extends Controller {
   def getNewMessagesByIndex(id:String, indexStr:String) = Action { implicit request =>
     val index = indexStr.toInt
     ActiveGames.getGame(id) match {
-      case Some(game) => Ok(Json.arr(game.getNewMessagesByIndex(index).map(_.info)))
+      case Some(game) => Ok(Json.toJson(game.getNewMessagesByIndex(index).map(_.info)))
       case _ => NotFound(s"Could not find a game with the id: $id")
     }
   }
