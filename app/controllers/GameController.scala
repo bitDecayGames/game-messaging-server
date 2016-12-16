@@ -5,9 +5,10 @@ import javax.inject._
 
 import db.ActiveGames
 import model.Message
-import play.api._
 import play.api.libs.json.Json
 import play.api.mvc._
+import util.Unzip
+
 
 @Singleton
 class GameController @Inject() extends Controller {
@@ -16,15 +17,18 @@ class GameController @Inject() extends Controller {
     Ok(ActiveGames.info)
   }
 
-  def registerNewGame = Action { implicit request =>
-    Ok(ActiveGames.registerNewGame.info)
-  }
-
   def getGame(id:String) = Action { implicit request =>
     ActiveGames.getGame(id).map(_.info) match {
       case Some(info) => Ok(info)
       case _ => NotFound(s"Could not find a game with the id: $id")
     }
+  }
+
+  def registerNewGame = Action(parse.temporaryFile){ request =>
+    val game = ActiveGames.registerNewGame
+    request.body.moveTo(new File(s"tmp/${game.id}.zip"))
+    Unzip(s"tmp/${game.id}.zip", s"tmp/${game.id}")
+    Ok(game.info)
   }
 
   def appendMessage(id:String) = Action { implicit request =>
