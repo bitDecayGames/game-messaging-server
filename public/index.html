@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="game">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Game</title>
-
-    <script src="lib/angular.min.js"></script>
-    <script src="lib/angular-route.min.js"></script>
-
-    <script src="js/util/MessageListener.js"></script>
-
-    <script src="js/app.js"></script>
-    <script src="js/factory/serverCommunication.js"></script>
-    <script src="js/factory/state.js"></script>
+    <title>Game Messaging Server</title>
+    <script>
+        function onSubmit(){
+            window.location.href = "/" + document.getElementById("gameCode").value.toUpperCase() + "/index.html";
+        }
+    </script>
 </head>
 <body>
-    <div ng-view></div>
+    <h1>Enter your game code:</h1>
+    <form id="pass-form" onsubmit="onSubmit(); return false;">
+        <input id="gameCode" type="text" name="gameCode" placeholder="GameCode">
+        <input type="submit" value="Submit" />
+    </form>
 </body>
 </html>

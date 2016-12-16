@@ -12,7 +12,7 @@ object Unzip {
 
   def apply(source: String, targetFolder: String) = {
     val targetFolderFile = new File(targetFolder)
-    targetFolderFile.mkdir()
+    targetFolderFile.mkdir
     val zipFile = new ZipFile(source)
 
     unzipAllFile(zipFile.entries.toList, getZipEntryInputStream(zipFile)_, targetFolderFile)

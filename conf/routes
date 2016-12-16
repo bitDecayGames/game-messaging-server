@@ -6,4 +6,4 @@ GET     /game/:id/messages/index/:index             controllers.GameController.g
 POST    /game/:id/message                           controllers.GameController.appendMessage(id)
 
 GET     /                                           controllers.Assets.versioned(path="/public", file="index.html")
-GET     /*file                                      controllers.Assets.versioned(path="/public", file)
+GET     /*file                                      controllers.Assets.versioned(path="/public/tmp", file)

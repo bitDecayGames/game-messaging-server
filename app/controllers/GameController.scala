@@ -26,8 +26,10 @@ class GameController @Inject() extends Controller {
 
   def registerNewGame = Action(parse.temporaryFile){ request =>
     val game = ActiveGames.registerNewGame
-    request.body.moveTo(new File(s"tmp/${game.id}.zip"))
-    Unzip(s"tmp/${game.id}.zip", s"tmp/${game.id}")
+    val file = new File(s"public/tmp/${game.id}.zip")
+    if (!file.getParentFile.exists) file.getParentFile.mkdirs
+    request.body.moveTo(file)
+    Unzip(s"public/tmp/${game.id}.zip", s"public/tmp/${game.id}")
     Ok(game.info)
   }
 
