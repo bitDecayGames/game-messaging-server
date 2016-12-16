@@ -2,12 +2,12 @@ package model
 
 import java.util.Date
 
-import play.api.libs.json.{JsValue, Json}
-
-import scala.util.Random
+import play.api.libs.json._
 
 class Game(val id:String) {
-  def this()= this(Random.alphanumeric.take(4).mkString.toUpperCase)
+  // TODO: this needs to be put back to random, just using AAAA for testing
+  //def this()= this(Random.alphanumeric.take(4).mkString.toUpperCase)
+  def this()= this("AAAA")
 
   val initTime:Long = System.currentTimeMillis()
   private var messages:Seq[Message] = Seq()

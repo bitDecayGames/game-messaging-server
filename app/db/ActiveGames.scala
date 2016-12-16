@@ -12,7 +12,7 @@ object ActiveGames {
   }
 
   def registerNewGame(game:Game):Game = {
-    games = games ++ Seq(game)
+    games = games.filter(curGame => curGame.id != game.id) ++ Seq(game)
     game
   }
 

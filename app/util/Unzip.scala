@@ -12,6 +12,7 @@ object Unzip {
 
   def apply(source: String, targetFolder: String) = {
     val targetFolderFile = new File(targetFolder)
+    deleteRecursively(targetFolderFile)
     targetFolderFile.mkdir
     val zipFile = new ZipFile(source)
 
@@ -51,5 +52,12 @@ object Unzip {
       writeToFile(reader, fos)
     } else
       true
+  }
+
+  private def deleteRecursively(file: File): Unit = {
+    if (file.isDirectory)
+      file.listFiles.foreach(deleteRecursively)
+    if (file.exists && !file.delete)
+      throw new RuntimeException(s"Unable to delete ${file.getAbsolutePath}")
   }
 }
