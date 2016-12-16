@@ -1,5 +1,6 @@
 package controllers
 
+import java.io.File
 import javax.inject._
 
 import db.ActiveGames
@@ -11,7 +12,7 @@ import play.api.mvc._
 @Singleton
 class GameController @Inject() extends Controller {
 
-  def index = Action { implicit request =>
+  def games = Action { implicit request =>
     Ok(ActiveGames.info)
   }
 
