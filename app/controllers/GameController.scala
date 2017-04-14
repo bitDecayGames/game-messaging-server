@@ -63,4 +63,14 @@ class GameController @Inject() extends Controller {
       case _ => NotFound(s"Could not find a game with the id: $id")
     }
   }
+
+  def getLastMessageOfType(id:String, ofType:String) = Action { implicit request =>
+    ActiveGames.getGame(id) match {
+      case Some(game) => game.getLastMessageOfType(ofType) match {
+        case Some(msg) => Ok(Json.toJson(msg.info))
+        case _ => NotFound(s"Could not find any messages of type: $ofType")
+      }
+      case _ => NotFound(s"Could not find a game with the id: $id")
+    }
+  }
 }

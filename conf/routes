@@ -3,6 +3,7 @@ POST    /register                                   controllers.GameController.r
 GET     /game/:id                                   controllers.GameController.getGame(id)
 GET     /game/:id/messages/time/:time               controllers.GameController.getNewMessagesByTime(id, time)
 GET     /game/:id/messages/index/:index             controllers.GameController.getNewMessagesByIndex(id, index)
+GET     /game/:id/messages/last/of/type/:type       controllers.GameController.getLastMessageOfType(id, type)
 POST    /game/:id/message                           controllers.GameController.appendMessage(id)
 
 GET     /                                           controllers.Assets.versioned(path="/public", file="index.html")

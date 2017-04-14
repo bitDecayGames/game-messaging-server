@@ -19,6 +19,11 @@ class Game(val id:String) {
 
   def getNewMessagesByTime(inclusiveTime:Long):Seq[Message] = messages.dropWhile(_.time < inclusiveTime)
 
+  def getLastMessageOfType(ofType:String):Option[Message] = messages.filter(_.messageType.contains(ofType)) match {
+    case Nil => None
+    case msgs => Option(msgs.maxBy(_.time))
+  }
+
   def info:JsValue = Json.obj("id" -> id, "initTime" -> initTime, "initTimeReadable" -> new Date(initTime).toString(), "lastUpdated" -> lastUpdated, "lastUpdatedReadable" -> new Date(lastUpdated).toString(), "messages" -> messages.map(_.info))
 
   def simpleInfo:JsValue = Json.obj("id" -> id, "initTime" -> initTime, "initTimeReadable" -> new Date(initTime).toString(), "lastUpdated" -> lastUpdated, "lastUpdatedReadable" -> new Date(lastUpdated).toString(), "messageCount" -> messages.size)
