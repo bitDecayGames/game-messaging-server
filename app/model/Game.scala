@@ -4,10 +4,12 @@ import java.util.Date
 
 import play.api.libs.json._
 
+import scala.util.Random
+
 class Game(val id:String) {
   // TODO: this needs to be put back to random, just using AAAA for testing
-  //def this()= this(Random.alphanumeric.take(4).mkString.toUpperCase)
-  def this()= this("AAAA")
+//  def this()= this("AAAA")
+  def this()= this(Game.randomId())
 
   val initTime:Long = System.currentTimeMillis()
   private var messages:Seq[Message] = Seq()
@@ -27,4 +29,9 @@ class Game(val id:String) {
   def info:JsValue = Json.obj("id" -> id, "initTime" -> initTime, "initTimeReadable" -> new Date(initTime).toString(), "lastUpdated" -> lastUpdated, "lastUpdatedReadable" -> new Date(lastUpdated).toString(), "messages" -> messages.map(_.info))
 
   def simpleInfo:JsValue = Json.obj("id" -> id, "initTime" -> initTime, "initTimeReadable" -> new Date(initTime).toString(), "lastUpdated" -> lastUpdated, "lastUpdatedReadable" -> new Date(lastUpdated).toString(), "messageCount" -> messages.size)
+}
+
+object Game{
+  val hexChars = Seq("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "a", "b", "c", "d", "e", "f")
+  def randomId():String = (1 to 4).map(_ => hexChars(Random.nextInt(hexChars.size))).mkString.toUpperCase
 }
