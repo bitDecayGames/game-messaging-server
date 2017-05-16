@@ -25,7 +25,7 @@ object Unzip {
 
     entryList match {
       case entry :: entries =>
-        println(s"Entry: ${entry.getName}")
+        println(s"Zip Entry: ${entry.getName}")
         val entryFile = new File(targetFolder, entry.getName)
         if (!entryFile.getParentFile.exists) entryFile.getParentFile.mkdirs
         saveFile(inputGetter(entry), new FileOutputStream(entryFile))

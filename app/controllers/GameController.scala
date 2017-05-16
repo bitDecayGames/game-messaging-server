@@ -5,13 +5,14 @@ import javax.inject._
 
 import db.ActiveGames
 import model.Message
+import play.api._
 import play.api.libs.json.Json
 import play.api.mvc._
 import util.Unzip
 
 
 @Singleton
-class GameController @Inject() extends Controller {
+class GameController @Inject() (conf: play.api.Configuration, env:Environment)  extends Controller {
 
   def games = Action { implicit request =>
     Ok(ActiveGames.info)
@@ -25,12 +26,22 @@ class GameController @Inject() extends Controller {
   }
 
   def registerNewGame = Action(parse.temporaryFile){ request =>
-    val game = ActiveGames.registerNewGame
-    val file = new File(s"public/tmp/${game.id}.zip")
-    if (file.exists) file.delete
-    if (!file.getParentFile.exists) file.getParentFile.mkdirs
+    val game = if (env.mode != Mode.Prod) ActiveGames.registerNewGame(Option("AAAA")) else ActiveGames.registerNewGame()
+    val gameFiles = conf.getString("gameFiles").getOrElse("public/tmp/")
+    val file = new File(s"$gameFiles${game.id}.zip")
+    println(s"Attempting to upload game files to ${file.getAbsolutePath}")
+    if (file.exists) {
+      println("File currently exists, deleting")
+      file.delete
+    }
+    if (!file.getParentFile.exists) {
+      println("Making parent folders")
+      file.getParentFile.mkdirs
+    }
+    println("Save to file")
     request.body.moveTo(file)
-    Unzip(s"public/tmp/${game.id}.zip", s"public/tmp/${game.id}")
+    println("Unzip file")
+    Unzip(s"$gameFiles${game.id}.zip", s"$gameFiles${game.id}")
     Ok(game.info)
   }
 

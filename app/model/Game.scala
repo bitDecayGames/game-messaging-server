@@ -7,9 +7,7 @@ import play.api.libs.json._
 import scala.util.Random
 
 class Game(val id:String) {
-  // TODO: this needs to be put back to random, just using AAAA for testing
-//  def this()= this("AAAA")
-  def this()= this(Game.randomId())
+  def this() = this(Game.randomId())
 
   val initTime:Long = System.currentTimeMillis()
   private var messages:Seq[Message] = Seq()

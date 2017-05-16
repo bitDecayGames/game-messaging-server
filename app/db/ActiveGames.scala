@@ -6,8 +6,8 @@ import play.api.libs.json.{JsValue, Json}
 object ActiveGames {
   private var games:Seq[Game] = Seq()
 
-  def registerNewGame:Game = {
-    val game = new Game()
+  def registerNewGame(id:Option[String] = None):Game = {
+    val game = id.map(gameId => new Game(gameId)).getOrElse(new Game())
     registerNewGame(game)
   }
 

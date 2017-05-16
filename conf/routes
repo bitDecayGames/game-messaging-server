@@ -7,4 +7,4 @@ GET     /game/:id/messages/last/of/type/:type       controllers.GameController.g
 POST    /game/:id/message                           controllers.GameController.appendMessage(id)
 
 GET     /                                           controllers.Assets.versioned(path="/public", file="index.html")
-GET     /*file                                      controllers.Assets.versioned(path="/public/tmp", file)
+GET     /*file                                      controllers.CustomExternalAssetsController.at(path="/home/mwingfield/gameFiles/", file)
