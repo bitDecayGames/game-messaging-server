@@ -6,6 +6,8 @@ GET     /game/:id/messages/index/:index             controllers.GameController.g
 GET     /game/:id/messages/last/of/type/:type       controllers.GameController.getLastMessageOfType(id, type)
 POST    /game/:id/message                           controllers.GameController.appendMessage(id)
 
+GET     /game/:id/ws/message                        controllers.GameController.socket(id)
+
 GET     /                                           controllers.Assets.versioned(path="/public", file="index.html")
 
 # Only one of these should be uncommented at any given time, one is for DEV the other for PROD

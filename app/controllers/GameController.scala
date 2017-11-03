@@ -3,16 +3,21 @@ package controllers
 import java.io.File
 import javax.inject._
 
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.stream.Materializer
 import db.ActiveGames
 import model.Message
 import play.api._
+import play.api.libs.Files
 import play.api.libs.json.Json
+import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import util.Unzip
 
 
 @Singleton
-class GameController @Inject() (conf: play.api.Configuration, env:Environment)  extends Controller {
+class GameController @Inject() (conf: play.api.Configuration, env:Environment)(implicit system:ActorSystem, mat:Materializer)  extends Controller {
+
 
   def games = Action { implicit request =>
     Ok(ActiveGames.info)
@@ -25,7 +30,7 @@ class GameController @Inject() (conf: play.api.Configuration, env:Environment)  
     }
   }
 
-  def registerNewGame = Action(parse.temporaryFile){ request =>
+  def registerNewGame: Action[Files.TemporaryFile] = Action(parse.temporaryFile){ request =>
     val game = if (env.mode != Mode.Prod) ActiveGames.registerNewGame(Option("AAAA")) else ActiveGames.registerNewGame()
     val gameFiles = conf.getString("gameFiles").getOrElse("public/tmp/")
     val file = new File(s"$gameFiles${game.id}.zip")
@@ -83,5 +88,40 @@ class GameController @Inject() (conf: play.api.Configuration, env:Environment)  
       }
       case _ => NotFound(s"Could not find a game with the id: $id")
     }
+  }
+
+  def socket(gameId:String): WebSocket = WebSocket.accept[String, String] { _ =>
+    ActorFlow.actorRef { out =>
+      MyWebSocketActor.props(out, gameId)
+    }
+  }
+}
+
+
+
+object MyWebSocketActor {
+
+  var openSockets:List[MyWebSocketActor] = Nil
+
+  def props(out: ActorRef, gameId:String): Props = Props(new MyWebSocketActor(out, gameId))
+}
+
+class MyWebSocketActor(val out: ActorRef, val gameId:String) extends Actor {
+  // add this to open sockets list
+  MyWebSocketActor.openSockets = (MyWebSocketActor.openSockets ++ List(this)).distinct
+
+  def receive: PartialFunction[Any, Unit] = {
+    case msg: String =>
+      val (message, fullMessageStr) = Message(msg)
+      // record message
+      ActiveGames.getGame(gameId).foreach(game => game.appendMessage(message))
+      // send message to all other actors
+      MyWebSocketActor.openSockets.filter(s => s.gameId == gameId && s != this).foreach(_.out ! fullMessageStr)
+  }
+
+  override def postStop(): Unit = {
+    // remove from open socket list
+    MyWebSocketActor.openSockets = MyWebSocketActor.openSockets.filterNot(_ == this)
+    super.postStop()
   }
 }

@@ -14,5 +14,22 @@ class Message(val body:JsValue) {
     case _ => None
   }
 
-  def info:JsValue = Json.obj("id" -> id, "time" -> time, "timeReadable" -> new Date(time).toString(), "message" -> body)
+  def info:JsValue = Json.parse(toString)
+
+  override def toString: String =
+    s"""
+      |{
+      |  "id": "$id",
+      |  "time": $time,
+      |  "timeReadable": "${new Date(time).toString}",
+      |  "message": ${Json.prettyPrint(body)}
+      |}
+    """.stripMargin
+}
+
+object Message{
+  def apply(body:String):(Message, String) = {
+    val msg = new Message(Json.parse(body))
+    (msg, s"""{"id": "${msg.id}", "time": ${msg.time}, "timeReadable": "${new Date(msg.time).toString}", "message": $body }""")
+  }
 }
